@@ -79,6 +79,22 @@ class ChatbotDataSource(models.Model):
             _logger.warning("Lumina module not found")
 
         # Add specific non-Lumina models we want to include
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         additional_models = self.env['ir.model'].sudo().search([
             ('model', 'in', [
                 'lumina.file',
