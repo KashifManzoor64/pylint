@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="chatbot_assistant_template" name="AI Assistant">
+        <t t-call="web.layout">
+            <t t-set="title">AI Assistant</t>
+            <t t-set="head">
+                <style>
+                    body {
+                    background-color: #343541;
+                    color: #ECECF1;
+                    font-family: 'Söhne', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu,
+                    Cantarell, 'Noto Sans', sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    height: 100vh;
+                    overflow: hidden;
+                    }
+                    .chatgpt-container {
+                    display: flex;
+                    height: 100vh;
+                    }
+                    .sidebar {
+                    width: 260px;
+                    background-color: #202123;
+                    height: 100%;
+                    overflow-y: auto;
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    }
+                    .main-content {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    height: 100vh;
+                    overflow: hidden;
+                    }
+                    .chat-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding-bottom: 120px;
+                    }
+                    .input-area {
+                    position: fixed;
+                    bottom: 0;
+                    width: calc(100% - 260px);
+                    padding: 20px;
+                    background-color: #343541;
+                    border-top: 1px solid #444654;
+                    /* ADDED: Flexbox to arrange input and button side-by-side */
+                    display: flex;
+                    align-items: flex-end; /* Aligns items to the bottom if they have different heights */
+                    gap: 15px; /* Space between input and button */
+                    }
+                    .message {
+                    padding: 20px;
+                    margin: 0;
+                    display: flex;
+                    align-items: flex-start;
+                    }
+                    .user-message {
+                    background-color: #343541;
+                    }
+                    .assistant-message {
+                    background-color: #444654;
+                    }
+                    .message-content {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    width: 100%;
+                    display: flex;
+                    gap: 20px;
+                    }
+                    .avatar {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    }
+                    .user-avatar {
+                    background-color: #5436DA;
+                    }
+                    .assistant-avatar {
+                    background-color: #10A37F;
+                    }
+                    .message-text {
+                    flex: 1;
+                    line-height: 1.6;
+                    }
+                    .input-container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    /* REMOVED: position: relative; as button is no longer inside */
+                    flex-grow: 1; /* Allows it to take up available space */
+                    }
+                    .message-input {
+                    width: 100%;
+                    padding: 14px;
+                    border-radius: 6px;
+                    border: 1px solid #565869;
+                    background-color: #40414F;
+                    color: #ECECF1;
+                    font-size: 16px;
+                    line-height: 1.5;
+                    height: 52px; /* Match button height */
+                    }
+
+                    .message-input:focus {
+                    outline: none;
+                    border-color: #10A37F;
+                    }
+                    .send-button {
+                    background-color: #10A37F;
+                    border: none;
+                    color: #FFFFFF;
+                    cursor: pointer;
+                    padding: 14px 20px;
+                    border-radius: 6px;
+                    height: 52px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    white-space: nowrap;
+                    }
+                    .send-button:hover {
+                    background-color: #0E8C6F; /* Slightly darker on hover */
+                    }
+                    .send-button:disabled {
+                    background-color: #565869; /* Greyed out when disabled */
+                    color: #B0B0B0;
+                    cursor: not-allowed;
+                    }
+                    .new-chat-button {
+                    background-color: #202123;
+                    border: 1px solid #565869;
+                    color: #ECECF1;
+                    padding: 12px;
+                    border-radius: 6px;
+                    text-align: left;
+                    margin-bottom: 20px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    }
+                    .new-chat-button:hover {
+                    background-color: #2A2B32;
+                    }
+                    .example-questions {
+                    margin-top: 20px;
+                    }
+                    .example-question {
+                    background-color: #2A2B32;
+                    border-radius: 6px;
+                    padding: 12px;
+                    margin-bottom: 10px;
+                    cursor: pointer;
+                    }
+                    .example-question:hover {
+                    background-color: #40414F;
+                    }
+                    .sidebar-title {
+                    color: #8E8EA0;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    margin: 20px 0 10px;
+                    }
+                    .welcome-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    text-align: center;
+                    padding: 0 20px;
+                    }
+                    .welcome-title {
+                    font-size: 32px;
+                    margin-bottom: 20px;
+                    }
+                    .welcome-subtitle {
+                    color: #8E8EA0;
+                    margin-bottom: 40px;
+                    }
+                    .examples-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                    max-width: 600px;
+                    }
+                    .example-card {
+                    background-color: #444654;
+                    border-radius: 6px;
+                    padding: 15px;
+                    cursor: pointer;
+                    }
+                    .example-card:hover {
+                    background-color: #40414F;
+                    }
+                    .example-card-title {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    }
+                    .example-card-text {
+                    color: #8E8EA0;
+                    font-size: 14px;
+                    }
+                    .mobile-sidebar-toggle {
+                    display: none;
+                    position: fixed;
+                    top: 10px;
+                    left: 10px;
+                    z-index: 1000;
+                    background-color: #202123;
+                    border: none;
+                    color: #ECECF1;
+                    padding: 8px;
+                    border-radius: 4px;
+                    }
+
+                    @media (max-width: 768px) {
+                    .sidebar {
+                    position: fixed;
+                    left: -260px;
+                    transition: left 0.3s ease;
+                    z-index: 999;
+                    }
+                    .sidebar.active {
+                    left: 0;
+                    }
+                    .main-content {
+                    margin-left: 0;
+                    }
+                    .input-area {
+                    width: 100%;
+                    flex-direction: column; /* Stack input and button on small screens */
+                    align-items: stretch; /* Stretch items to full width */
+                    gap: 10px;
+                    }
+                    .input-container {
+                    width: 100%; /* Make input container take full width */
+                    margin: 0; /* Remove auto margins */
+                    }
+                    .send-button {
+                    width: 100%; /* Make button take full width */
+                    }
+                    .mobile-sidebar-toggle {
+                    display: block;
+                    }
+                    }
+                </style>
+            </t>
+
+            <div class="chatgpt-container">
+                <div class="sidebar" id="sidebar">
+                    <button class="new-chat-button">
+                        <i class="fa fa-plus"></i>
+                        New chat
+                    </button>
+
+                    <div class="sidebar-title">Example questions</div>
+                    <div class="example-questions">
+                        <div class="example-question" data-question="How do I create a new client file?">
+                            How do I create a new client file?
+                        </div>
+                        <div class="example-question"
+                             data-question="What is the process for verifying a client's phone number?">
+                            What is the process for verifying a client's phone number?
+                        </div>
+                        <div class="example-question" data-question="How can I update a client's availability?">
+                            How can I update a client's availability?
+                        </div>
+                        <div class="example-question" data-question="What are the steps to schedule an appointment?">
+                            What are the steps to schedule an appointment?
+                        </div>
+                    </div>
+                </div>
+
+                <button class="mobile-sidebar-toggle" id="sidebar-toggle">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <div class="main-content">
+                    <div class="chat-container" id="chat-messages">
+                        <div class="welcome-container" id="welcome-screen">
+                            <h1 class="welcome-title">Lumina AI Assistant</h1>
+                            <p class="welcome-subtitle">Ask me anything about Lumina or Odoo</p>
+
+                            <div class="examples-grid">
+                                <div class="example-card" data-question="How do I create a new client file?">
+                                    <div class="example-card-title">Create a client file</div>
+                                    <div class="example-card-text">Learn how to create and manage client records</div>
+                                </div>
+                                <div class="example-card"
+                                     data-question="What is the process for verifying a client's phone number?">
+                                    <div class="example-card-title">Verify phone numbers</div>
+                                    <div class="example-card-text">Understand the verification workflow</div>
+                                </div>
+                                <div class="example-card" data-question="How can I update a client's availability?">
+                                    <div class="example-card-title">Update availability</div>
+                                    <div class="example-card-text">Manage client scheduling preferences</div>
+                                </div>
+                                <div class="example-card"
+                                     data-question="What are the steps to schedule an appointment?">
+                                    <div class="example-card-title">Schedule appointments</div>
+                                    <div class="example-card-text">Learn the appointment booking process</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-area">
+                        <form id="message-form" action="/my_chatbot/ask_ai" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="input-container">
+                                <textarea id="user-input" name="query" class="message-input"
+                                          placeholder="Message Lumina AI..."
+                                          rows="1"></textarea>
+                            </div>
+                            <button type="submit" id="send-button" class="send-button">
+                                <i class="fa fa-paper-plane"></i>
+                                Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

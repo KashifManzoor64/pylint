@@ -1,0 +1,20 @@
+<odoo>
+    <!-- Top menu item -->
+    <menuitem id="menu_my_chatbot_root"
+              name="AI Assistant"
+              sequence="100"/>
+
+    <!-- Action to open the chatbot page -->
+    <record id="action_open_chatbot_assistant_url" model="ir.actions.act_url">
+        <field name="name">AI Assistant</field>
+        <field name="url">/my_chatbot/assistant</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu item under the top menu -->
+    <menuitem id="menu_chatbot_assistant"
+              name="Ask AI Assistant"
+              parent="menu_my_chatbot_root"
+              action="action_open_chatbot_assistant_url"
+              sequence="10"/>
+</odoo>

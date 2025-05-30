@@ -1,0 +1,29 @@
+<odoo>
+
+    <data noupdate="1">
+
+        <record id="action_reindex_chatbot_data" model="ir.actions.server">
+
+            <field name="name">Re-index Chatbot Data</field>
+
+            <field name="model_id" ref="my_chatbot_module.model_my_chatbot"/>
+            <field name="binding_model_id" ref="base.model_ir_ui_view"/>
+            <field name="binding_type">action</field>
+
+            <field name="state">code</field>
+
+            <field name="code">
+
+                env['chatbot.data.source'].full_reindex_chatbot_data()
+            </field>
+
+        </record>
+        <menuitem id="menu_reindex_chatbot_data"
+          name="Re-index Data"
+          parent="menu_my_chatbot_root"
+          action="action_reindex_chatbot_data"
+          sequence="20"/>
+
+    </data>
+
+</odoo>
