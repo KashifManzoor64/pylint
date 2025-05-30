@@ -24,6 +24,9 @@ class ChatbotDataSource(models.Model):
     embedding = fields.Text(string="Vector Embedding",
                             help="Vector representation of the content, stored as a JSON string.")
 
+
+
+
     @api.model
     def _get_reference_models(self):
         """
