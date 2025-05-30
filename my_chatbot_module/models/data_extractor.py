@@ -95,6 +95,8 @@ class ChatbotDataSource(models.Model):
 
 
 
+
+
         additional_models = self.env['ir.model'].sudo().search([
             ('model', 'in', [
                 'lumina.file',
